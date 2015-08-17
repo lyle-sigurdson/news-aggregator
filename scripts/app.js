@@ -277,12 +277,13 @@ APP.Main = (function() {
 
     var header = $('header');
     var headerTitles = header.querySelector('.header__title-wrapper');
-    var scrollTopCapped = Math.min(70, main.scrollTop);
+    var scrollTop = main.scrollTop;
+    var scrollTopCapped = Math.min(70, scrollTop);
     var scaleString = 'scale(' + (1 - (scrollTopCapped / 300)) + ')';
 
-    header.style.height = (156 - scrollTopCapped) + 'px';
-    headerTitles.style.webkitTransform = scaleString;
-    headerTitles.style.transform = scaleString;
+    // Check if we need to load the next batch of stories.
+    var loadThreshold = (main.scrollHeight - main.offsetHeight -
+        LAZY_LOAD_THRESHOLD);
 
     // Add a shadow to the header.
     if (main.scrollTop > 70)
@@ -290,10 +291,11 @@ APP.Main = (function() {
     else
       document.body.classList.remove('raised');
 
-    // Check if we need to load the next batch of stories.
-    var loadThreshold = (main.scrollHeight - main.offsetHeight -
-        LAZY_LOAD_THRESHOLD);
-    if (main.scrollTop > loadThreshold)
+    header.style.height = (156 - scrollTopCapped) + 'px';
+    headerTitles.style.webkitTransform = scaleString;
+    headerTitles.style.transform = scaleString;
+
+    if (scrollTop > loadThreshold)
       loadStoryBatch();
   });
 
