@@ -266,9 +266,11 @@ APP.Main = (function() {
       var title = story.querySelector('.story__title');
 
       score.style.backgroundColor = 'hsl(42, ' + scale * 100 + '%, 50%)';
-      score.style.width = (scale * 40) + 'px';
-      score.style.height = (scale * 40) + 'px';
-      score.style.lineHeight = (scale * 40) + 'px';
+      if (scale > .65) {
+          score.style.width = (scale * 40) + 'px';
+          score.style.height = (scale * 40) + 'px';
+          score.style.lineHeight = (scale * 40) + 'px';
+      }
       title.style.opacity = scale;
     }
   }
