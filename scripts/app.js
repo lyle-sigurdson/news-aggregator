@@ -149,16 +149,13 @@ APP.Main = (function() {
         commentsElement.appendChild(comment);
 
         // Update the comment with the live data.
-        APP.Data.getStoryComment(kids[k], function(commentDetails) {
-
-          commentDetails.time *= 1000;
-
-          var comment = commentsElement.querySelector(
-              '#sdc-' + commentDetails.id);
-          comment.innerHTML = storyDetailsCommentTemplate(
-              commentDetails,
-              localeData);
-        });
+        APP.Data.getStoryComment(kids[k])
+            .then(function(commentDetails) {
+                var comment = commentsElement.querySelector('#sdc-' + commentDetails.id);
+                commentDetails.time *= 1000;
+                comment.innerHTML = storyDetailsCommentTemplate( commentDetails, localeData);
+            })
+            .done();
       }
     }
 

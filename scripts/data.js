@@ -51,12 +51,8 @@ APP.Data = (function() {
   }
 
   function getStoryComment(id, callback) {
-
     var storyCommentURL = HN_STORYDETAILS_URL.replace(/\[ID\]/, id);
-
-    request(storyCommentURL, function(evt) {
-      callback(evt.target.response);
-    });
+    return request(storyCommentURL);
   }
 
 
