@@ -338,7 +338,7 @@ APP.Main = (function() {
                 story.classList.add('story');
                 story.classList.add('clickable');
                 story.setAttribute('id', 's-' + key);
-                story.addEventListener('click', onStoryClick.bind(this, curr.value.details)); // TODO: what is last arg supposed to be?
+                story.addEventListener('click', onStoryClick.bind(this, curr.value));
                 story.innerHTML = storyTemplate({
                   title: curr.value.title,
                   score: curr.value.score,
