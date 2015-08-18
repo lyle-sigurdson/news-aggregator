@@ -1,0 +1,22 @@
+{
+  "name": "news-aggregator",
+  "version": "0.0.0",
+  "homepage": "https://github.com/lyle-sigurdson/news-aggregator",
+  "authors": [
+    "Lyle Sigurdson <lyle@sent.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "q": "1.0.1"
+  }
+}

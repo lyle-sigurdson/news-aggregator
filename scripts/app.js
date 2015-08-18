@@ -21,10 +21,10 @@ APP.Main = (function() {
 
   var stories = null;
   var storyStart = 0;
+  var loadInProgress = false;
   var count = 100;
   var main = $('main');
   var inDetails = false;
-  var storyLoadCount = 0;
   var localeData = {
     data: {
       intl: {
@@ -61,8 +61,10 @@ APP.Main = (function() {
    * that should really be handled more delicately, and
    * probably in a requestAnimationFrame callback.
    */
+  /*
   function onStoryData (key, details) {
 
+                story.classList.add('clickable');
     // This seems odd. Surely we could just select the story
     // directly rather than looping through all of them.
     var storyElements = document.querySelectorAll('.story');
@@ -88,6 +90,7 @@ APP.Main = (function() {
     if (storyLoadCount === 0)
       colorizeAndScaleStories();
   }
+  */
 
   function onStoryClick(details) {
 
@@ -297,47 +300,78 @@ APP.Main = (function() {
     headerTitles.style.webkitTransform = scaleString;
     headerTitles.style.transform = scaleString;
 
-    if (scrollTop > loadThreshold)
+    if (scrollTop > loadThreshold) {
       loadStoryBatch();
+    }
   });
 
   function loadStoryBatch() {
+    var end = Math.min(storyStart + count, stories.length),
+        fragment = document.createDocumentFragment(),
+        i,
+        batch = [];
 
-    if (storyLoadCount > 0)
-      return;
-
-    storyLoadCount = count;
-
-    var end = storyStart + count;
-    for (var i = storyStart; i < end; i++) {
-
-      if (i >= stories.length)
+    if (loadInProgress) {
         return;
+    }
 
-      var key = String(stories[i]);
-      var story = document.createElement('div');
-      story.setAttribute('id', 's-' + key);
-      story.classList.add('story');
-      story.innerHTML = storyTemplate({
-        title: '...',
-        score: '-',
-        by: '...',
-        time: 0
-      });
-      main.appendChild(story);
+    loadInProgress = true;
 
-      APP.Data.getStoryById(stories[i], onStoryData.bind(this, key));
+    for (i = storyStart; i < end; i++) {
+        batch.push(APP.Data.getStoryById(stories[i]));
+    }
+
+    if (!batch.length) {
+        return;
     }
 
     storyStart += count;
 
+    return Q.allSettled(batch)
+        .then(function (results) {
+            return results.reduce(function (prev, curr, i) {
+                var story = document.createElement('div'),
+                    key = parseInt(stories[i], 10);
+
+                story.classList.add('story');
+                story.classList.add('clickable');
+                story.setAttribute('id', 's-' + key);
+                story.addEventListener('click', onStoryClick.bind(this, curr.value.details)); // TODO: what is last arg supposed to be?
+                story.innerHTML = storyTemplate({
+                  title: curr.value.title,
+                  score: curr.value.score,
+                  by: curr.value.by,
+                  time: curr.value.time * 1000
+                });
+
+                fragment.appendChild(story);
+
+                return fragment;
+            })
+        })
+        .then(function (fragment) {
+            colorizeAndScaleStories();
+            return main.appendChild(fragment);
+        })
+        .catch(function (err) {
+            console.log(err.stack);
+        })
+        .finally(function () {
+            loadInProgress = false;
+        });
   }
 
   // Bootstrap in the stories.
-  APP.Data.getTopStories(function(data) {
-    stories = data;
-    loadStoryBatch();
+  APP.Data.getTopStories()
+    .then(function (data) {
+     stories = data;
+     return loadStoryBatch();
+    })
+  .then(function () {
     main.classList.remove('loading');
-  });
-
+  })
+  .catch(function (err) {
+    console.log(err)
+  }).
+  done();
 })();

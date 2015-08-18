@@ -1,3 +1,5 @@
+/*jslint browser: true */
+/*global APP, Q */
 /**
  *
  * Copyright 2015 Google Inc. All rights reserved.
@@ -20,19 +22,32 @@ APP.Data = (function() {
   var HN_TOPSTORIES_URL = HN_API_BASE + '/v0/topstories.json';
   var HN_STORYDETAILS_URL = HN_API_BASE + '/v0/item/[ID].json';
 
-  function getTopStories(callback) {
-    request(HN_TOPSTORIES_URL, function(evt) {
-      callback(evt.target.response);
+  function request(url) {
+    var defer = Q.defer(),
+        xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('error', function () {
+        defer.reject(xhr.statusText);
     });
+
+    xhr.addEventListener('load', function() {
+        defer.resolve(xhr.response);
+    });
+
+    xhr.responseType = 'json';
+    xhr.open('GET', url, true);
+    xhr.send();
+
+    return defer.promise;
   }
 
-  function getStoryById(id, callback) {
+  function getTopStories() {
+    return request(HN_TOPSTORIES_URL);
+  }
 
+  function getStoryById(id) {
     var storyURL = HN_STORYDETAILS_URL.replace(/\[ID\]/, id);
-
-    request(storyURL, function(evt) {
-      callback(evt.target.response);
-    });
+    return request(storyURL);
   }
 
   function getStoryComment(id, callback) {
@@ -44,18 +59,10 @@ APP.Data = (function() {
     });
   }
 
-  function request(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'json';
-    xhr.onload = callback;
-    xhr.send();
-  }
 
   return {
     getTopStories: getTopStories,
     getStoryById: getStoryById,
     getStoryComment: getStoryComment
   };
-
-})();
+}());
