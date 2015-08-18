@@ -274,7 +274,9 @@ APP.Main = (function() {
           score.style.height = (scale * 40) + 'px';
           score.style.lineHeight = (scale * 40) + 'px';
       }
-      title.style.opacity = scale;
+      if (scale > .45) {
+          title.style.opacity = scale;
+      }
     }
   }
 
@@ -350,7 +352,6 @@ APP.Main = (function() {
             })
         })
         .then(function (fragment) {
-            colorizeAndScaleStories();
             return main.appendChild(fragment);
         })
         .catch(function (err) {
@@ -368,6 +369,7 @@ APP.Main = (function() {
      return loadStoryBatch();
     })
   .then(function () {
+    colorizeAndScaleStories();
     main.classList.remove('loading');
   })
   .catch(function (err) {
