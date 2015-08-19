@@ -245,11 +245,6 @@ main.loading {
   transition: transform ease .3s;
 }
 
-.story-details * {
-  will-change: transform;
-  transform: translateZ(0);
-}
-
 .story-details__content {
   -webkit-flex: 1;
       -ms-flex: 1;
