@@ -151,6 +151,10 @@ APP.Main = (function() {
     var left = 0;
 
     storyDetails.classList.remove('details-active');
+
+    if (storyDetails.parentNode) {
+        storyDetails.parentNode.removeChild(storyDetails);
+    }
   }
 
   /**
