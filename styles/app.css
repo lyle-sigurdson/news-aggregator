@@ -92,6 +92,10 @@ a {
   opacity: 0.54;
 }
 
+.story-details.details-active {
+    transform: translate(0);
+}
+
 body.details-active .story__title,
 body.details-active .story__by,
 body.details-active .story__score {
@@ -225,10 +229,8 @@ main.loading {
       -webkit-align-content: stretch;
           align-content: stretch;
 
-  opacity: 0;
-  position: fixed;
+  position: absolute;
   top: 0;
-  left: 100%;
   width: 100%;
   height: 100%;
   background: white;
@@ -239,7 +241,8 @@ main.loading {
       0px 2px 7px 0px rgba(0, 0, 0, 0.10);
 
   overflow: hidden;
-  transition: opacity 0.3s ease-out;
+  transform: translate(100%);
+  transition: transform ease .3s;
 }
 
 .story-details * {
