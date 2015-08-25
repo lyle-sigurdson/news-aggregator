@@ -28,16 +28,34 @@ html, body {
   color: #444;
 }
 
-html {
-  overflow: hidden;
+#global {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
 }
 
-body {
+#slider {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    transform: translate(100%);
+    transition: transform ease 0.3s;
+    xz-index: auto;
+    overflow: scroll;
+}
+
+#slider.open {
+    transform: translate(0);
+}
+
+#flex-container {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   -webkit-flex-direction: column;
-      -ms-flex-direction: column;
+      -ms-flex-dxirection: column;
           flex-direction: column;
   -webkit-flex-wrap: nowrap;
       -ms-flex-wrap: nowrap;
@@ -51,7 +69,11 @@ body {
   -ms-flex-line-pack: stretch;
       -webkit-align-content: stretch;
           align-content: stretch;
+
+  position: relative;
   background: #ececec;
+  height: 100%;
+  xz-index: auto;
 }
 
 a {
@@ -68,6 +90,7 @@ a {
   padding: 0 0 0 72px;
   z-index: 1;
   position: fixed;
+  xz-index: auto;
 }
 
 .header__title-wrapper {
@@ -89,25 +112,25 @@ a {
   font-weight: 400;
   padding: 0;
   margin: 0;
-  opacity: 0.54;
+  xopacity: 0.54;
 }
 
 .story-details.details-active {
     transform: translate(0);
 }
 
-body.details-active .story__title,
-body.details-active .story__by,
-body.details-active .story__score {
-  transition: opacity 0.5s ease-out;
-  opacity: 0 !important;
+.details-active .story__title,
+.details-active .story__by,
+.details-active .story__score {
+  transition: xopacity 0.5s ease-out;
+  xopacity: 0 !important;
 }
 
-body.details-active .story {
+.details-active .story {
   background: linear-gradient(to bottom, #FFF 0%, #FFF 100%);
 }
 
-body.raised .header {
+.raised .header {
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.16),
       0px 2px 5px 0px rgba(0, 0, 0, 0.23);
 }
@@ -121,6 +144,7 @@ main {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 0;
+  xz-index: auto;
 }
 
 main.loading {
@@ -175,7 +199,7 @@ main.loading {
   font-size: 20px;
   font-weight: 500;
   color: rgba(0,0,0,0.87);
-  opacity: 0.3232323232;
+  xopacity: 0.3232323232;
   margin: 0;
   padding: 0;
   line-height: 32px;
@@ -255,6 +279,8 @@ main.loading {
   -webkit-overflow-scrolling: touch;
 
   padding: 0 16px 72px 72px;
+
+  background-color: rgba(255,255,255, 1);
 }
 
 .story-details__title {
@@ -266,7 +292,7 @@ main.loading {
 
 .story-details__title-link {
   color: #FFF;
-  opacity: 0.6;
+  xopacity: 0.6;
 }
 
 .story-details__url {
@@ -326,7 +352,7 @@ main.loading {
 .story-details__comments-title {
   font-weight: 400;
   margin: 0;
-  padding: 48px 0 0 0;
+  padding: 70px 0 0 0;
 }
 
 .story-details__link {
@@ -346,6 +372,7 @@ footer {
   color: #888;
   text-align: center;
   line-height: 40px;
+  z-index: auto;
 }
 
 footer a {

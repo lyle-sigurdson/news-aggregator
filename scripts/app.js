@@ -18,6 +18,7 @@ APP.Main = (function() {
 
   var LAZY_LOAD_THRESHOLD = 300;
   var $ = document.querySelector.bind(document);
+  var slider = document.getElementById('slider');
 
   var stories = null;
   var storyStart = 0;
@@ -56,72 +57,55 @@ APP.Main = (function() {
       Handlebars.compile(tmplStoryDetailsComment);
 
   function onStoryClick(details) {
+      console.log(details);
+  // Open the slider.
+    slider.classList.toggle('open');
 
-    var storyDetails = $('sd-' + details.id);
+    // Show the story details and comments.
+    APP.Data.getStoryById(details.id)
+        .then(function (story) {
+            slider.innerHTML = storyDetailsTemplate(story);
 
-    // Wait a little time then show the story details.
-    setTimeout(showStory.bind(this, details.id), 60);
+            slider.getElementsByTagName('button')[0].addEventListener('click', function (e) {
+                slider.classList.toggle('open');
+            });
 
-    // Create and append the story. A visual change...
-    // perhaps that should be in a requestAnimationFrame?
-    // And maybe, since they're all the same, I don't
-    // need to make a new element every single time? I mean,
-    // it inflates the DOM and I can only see one at once.
-    if (!storyDetails) {
+            if (story.kids) {
+                return Q.allSettled(story.kids.map(function (kidId) {
+                    return APP.Data.getStoryComment(kidId);
+                }));
+            } else {
+                return [];
+            }
+        })
+        .then(function (kids) {
+            var fragment = document.createDocumentFragment();
 
-      if (details.url)
-        details.urlobj = new URL(details.url);
+            kids.forEach(function (kid) {
+                var section = document.createElement('section'),
+                    p = document.createElement('p'),
+                    div = document.createElement('div');
 
-      var comment;
-      var commentsElement;
-      var storyHeader;
-      var storyContent;
+                section.classList.add('story-details__content');
 
-      var storyDetailsHtml = storyDetailsTemplate(details);
-      var kids = details.kids;
-      var commentHtml = storyDetailsCommentTemplate({
-        by: '', text: 'Loading comment...'
-      });
+                p.classList.add('story-details-comment__author');
+                p.textContent = 'by ' + kid.value.by + (kid.value.time ? ' ' + kid.value.time : '');
 
-      storyDetails = document.createElement('section');
-      storyDetails.setAttribute('id', 'sd-' + details.id);
-      storyDetails.classList.add('story-details');
-      storyDetails.innerHTML = storyDetailsHtml;
+                div.classList.add('story-details-comment__text');
+                div.innerHTML = kid.value.text;
 
-      document.body.appendChild(storyDetails);
+                section.appendChild(p);
+                section.appendChild(div);
 
-      commentsElement = storyDetails.querySelector('.js-comments');
-      storyHeader = storyDetails.querySelector('.js-header');
-      storyContent = storyDetails.querySelector('.js-content');
+                fragment.appendChild(section);
+            });
 
-      var closeButton = storyDetails.querySelector('.js-close');
-      closeButton.addEventListener('click', hideStory.bind(this, details.id));
-
-      var headerHeight = storyHeader.getBoundingClientRect().height;
-      storyContent.style.paddingTop = headerHeight + 'px';
-
-      if (typeof kids === 'undefined')
-        return;
-
-      for (var k = 0; k < kids.length; k++) {
-
-        comment = document.createElement('aside');
-        comment.setAttribute('id', 'sdc-' + kids[k]);
-        comment.classList.add('story-details__comment');
-        comment.innerHTML = commentHtml;
-        commentsElement.appendChild(comment);
-
-        // Update the comment with the live data.
-        APP.Data.getStoryComment(kids[k])
-            .then(function(commentDetails) {
-                var comment = commentsElement.querySelector('#sdc-' + commentDetails.id);
-                commentDetails.time *= 1000;
-                comment.innerHTML = storyDetailsCommentTemplate( commentDetails, localeData);
-            })
-            .done();
-      }
-    }
-
+            slider.appendChild(fragment);
+        })
+        .catch (function (err) {
+            console.log(err);
+        })
+        .done();
   }
 
   function showStory(id) {
@@ -189,7 +173,7 @@ APP.Main = (function() {
   main.addEventListener('scroll', function() {
 
     var header = $('header');
-    var headerTitles = header.querySelector('.header__title-wrapper');
+    var headerTitles = document.querySelector('.header__title-wrapper');
     var scrollTop = main.scrollTop;
     var scrollTopCapped = Math.min(70, scrollTop);
     var scaleString = 'scale(' + (1 - (scrollTopCapped / 300)) + ')';
@@ -279,7 +263,7 @@ APP.Main = (function() {
     main.classList.remove('loading');
   })
   .catch(function (err) {
-    console.log(err)
+    console.log(err.stack)
   }).
   done();
 })();

@@ -70,28 +70,33 @@ limitations under the License.
   <link rel="stylesheet" href="styles/app.css">
 
   </head>
-
   <body>
+    <div id="global">
 
-    <header class="header">
+      <div id="flex-container">
+        <header class="header">
 
-      <div class="header__title-wrapper">
-        <h1 class="header__title">Hacker News</h1>
-        <h2 class="header__subhead">Top Stories</h2>
+          <div class="header__title-wrapper">
+            <h1 class="header__title">Hacker News</h1>
+            <h2 class="header__subhead">Top Stories</h2>
+          </div>
+
+        </header>
+
+        <main class="loading">
+        </main>
+
+        <footer>
+          Powered by the <a href="https://github.com/HackerNews/API">Hacker News API</a>
+        </footer>
       </div>
 
-    </header>
-
-    <main class="loading">
-    </main>
-
-    <footer>
-      Powered by the <a href="https://github.com/HackerNews/API">Hacker News API</a>
-    </footer>
-
+      <div id="slider">
+        <p>wait</p>
+      </div>
+    </div>
     <script src="scripts/namespace.js"></script>
     <script src="scripts/data.js"></script>
     <script src="scripts/app.js"></script>
-
   </body>
 </html>
