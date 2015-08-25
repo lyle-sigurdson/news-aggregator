@@ -64,6 +64,8 @@ APP.Main = (function() {
     // Show the story details and comments.
     APP.Data.getStoryById(details.id)
         .then(function (story) {
+            story.time *= 1000;
+
             slider.innerHTML = storyDetailsTemplate(story);
 
             slider.getElementsByTagName('button')[0].addEventListener('click', function (e) {
