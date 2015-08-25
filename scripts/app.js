@@ -110,38 +110,6 @@ APP.Main = (function() {
         .done();
   }
 
-  function showStory(id) {
-
-    if (inDetails)
-      return;
-
-    inDetails = true;
-
-    var storyDetails = $('#sd-' + id);
-    var left = null;
-
-    if (!storyDetails)
-      return;
-
-    storyDetails.classList.add('details-active');
-  }
-
-  function hideStory(id) {
-
-    if (!inDetails)
-      return;
-
-    inDetails = false;
-
-    var storyDetails = $('#sd-' + id);
-    var left = 0;
-
-    storyDetails.classList.remove('details-active');
-
-    if (storyDetails.parentNode) {
-        storyDetails.parentNode.removeChild(storyDetails);
-    }
-  }
 
   /**
    * Does this really add anything? Can we do this kind
