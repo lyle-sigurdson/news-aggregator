@@ -113,34 +113,6 @@ APP.Main = (function() {
   }
 
 
-  /**
-   * Does this really add anything? Can we do this kind
-   * of work in a cheaper way?
-   */
-  function colorizeAndScaleStories() {
-
-    var storyElements = document.querySelectorAll('.story');
-
-    // It does seem awfully broad to change all the
-    // colors every time!
-    for (var s = 0; s < storyElements.length; s++) {
-      var scale = Math.abs(s / storyElements.length - 1);
-
-      var story = storyElements[s];
-      var score = story.querySelector('.story__score');
-      var title = story.querySelector('.story__title');
-
-      score.style.backgroundColor = 'hsl(42, ' + scale * 100 + '%, 50%)';
-      if (scale > .65) {
-          score.style.width = (scale * 40) + 'px';
-          score.style.height = (scale * 40) + 'px';
-          score.style.lineHeight = (scale * 40) + 'px';
-      }
-      if (scale > .45) {
-          title.style.opacity = scale;
-      }
-    }
-  }
 
   main.addEventListener('scroll', function() {
 
@@ -169,11 +141,13 @@ APP.Main = (function() {
     }
   });
 
-  function loadStoryBatch() {
+  function loadStoryBatch(options) {
     var end = Math.min(storyStart + count, stories.length),
         fragment = document.createDocumentFragment(),
         i,
         batch = [];
+
+    options = options || {};
 
     if (loadInProgress) {
         return;
@@ -195,7 +169,10 @@ APP.Main = (function() {
         .then(function (results) {
             return results.reduce(function (prev, curr, i) {
                 var story = document.createElement('div'),
-                    key = parseInt(stories[i], 10);
+                    key = parseInt(stories[i], 10),
+                    score,
+                    title,
+                    scale;
 
                 story.classList.add('story');
                 story.classList.add('clickable');
@@ -207,6 +184,22 @@ APP.Main = (function() {
                   by: curr.value.by,
                   time: curr.value.time * 1000
                 });
+
+                if (options.colorize) {
+                  scale = Math.abs(i - count) / count;
+                  score = story.querySelector('.story__score');
+                  title = story.querySelector('.story__title');
+                  score.style.backgroundColor = 'hsl(42, ' + scale * 100 + '%, 50%)';
+
+                  if (scale > .65) {
+                      score.style.width = (scale * 40) + 'px';
+                      score.style.height = (scale * 40) + 'px';
+                      score.style.lineHeight = (scale * 40) + 'px';
+                  }
+                  if (scale > .45) {
+                      title.style.opacity = scale;
+                  }
+                }
 
                 fragment.appendChild(story);
 
@@ -228,10 +221,9 @@ APP.Main = (function() {
   APP.Data.getTopStories()
     .then(function (data) {
      stories = data;
-     return loadStoryBatch();
+     return loadStoryBatch({ colorize: true });
     })
   .then(function () {
-    colorizeAndScaleStories();
     main.classList.remove('loading');
   })
   .catch(function (err) {
