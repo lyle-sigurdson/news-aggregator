@@ -59,7 +59,6 @@ APP.Main = (function() {
       Handlebars.compile(tmplStoryDetailsComment);
 
   function onStoryClick(details) {
-      console.log(details);
   // Open the slider.
     slider.classList.toggle('open');
 
