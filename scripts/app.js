@@ -125,10 +125,6 @@ APP.Main = (function() {
     var loadThreshold = (main.scrollHeight - main.offsetHeight -
         LAZY_LOAD_THRESHOLD);
 
-    // Add a shadow to the header.
-    if (main.scrollTop > 70)
-      document.body.classList.toggle('raised');
-
     if (scrollTop < 70) {
       header.style.height = (156 - scrollTopCapped) + 'px';
       headerTitles.style.webkitTransform = scaleString;
