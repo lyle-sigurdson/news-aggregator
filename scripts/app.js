@@ -20,6 +20,8 @@ APP.Main = (function() {
   var $ = document.querySelector.bind(document);
   var slider = document.getElementById('slider');
 
+  var header = $('header');
+  var headerTitles = document.querySelector('.header__title-wrapper');
   var stories = null;
   var storyStart = 0;
   var loadInProgress = false;
@@ -115,9 +117,6 @@ APP.Main = (function() {
 
 
   main.addEventListener('scroll', function() {
-
-    var header = $('header');
-    var headerTitles = document.querySelector('.header__title-wrapper');
     var scrollTop = main.scrollTop;
     var scrollTopCapped = Math.min(70, scrollTop);
     var scaleString = 'scale(' + (1 - (scrollTopCapped / 300)) + ')';
@@ -128,13 +127,13 @@ APP.Main = (function() {
 
     // Add a shadow to the header.
     if (main.scrollTop > 70)
-      document.body.classList.add('raised');
-    else
-      document.body.classList.remove('raised');
+      document.body.classList.toggle('raised');
 
-    header.style.height = (156 - scrollTopCapped) + 'px';
-    headerTitles.style.webkitTransform = scaleString;
-    headerTitles.style.transform = scaleString;
+    if (scrollTop < 70) {
+      header.style.height = (156 - scrollTopCapped) + 'px';
+      headerTitles.style.webkitTransform = scaleString;
+      headerTitles.style.transform = scaleString;
+    }
 
     if (scrollTop > loadThreshold) {
       loadStoryBatch();
