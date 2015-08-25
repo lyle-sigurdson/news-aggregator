@@ -201,7 +201,9 @@ APP.Main = (function() {
             })
         })
         .then(function (fragment) {
-            return main.appendChild(fragment);
+            return window.requestAnimationFrame(function () {
+                main.appendChild(fragment);
+            });
         })
         .catch(function (err) {
             console.log(err.stack);
