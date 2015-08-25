@@ -102,7 +102,9 @@ APP.Main = (function() {
                 fragment.appendChild(section);
             });
 
-            slider.appendChild(fragment);
+            window.requestAnimationFrame(function () {
+                slider.appendChild(fragment);
+            });
         })
         .catch (function (err) {
             console.log(err);
